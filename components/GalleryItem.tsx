@@ -1,10 +1,10 @@
 'use client'
+
 import Image from 'next/image'
 import { useState } from 'react'
-import Lightbox from 'react-image-lightbox'
-import 'react-image-lightbox/style.css'
+import { Lightbox } from 'yet-another-react-lightbox'
+import 'yet-another-react-lightbox/styles.css'
 
-// ✅ أولاً: تعريف الواجهة لخصائص الكومبوننت
 interface GalleryItemProps {
   title: string
   description: string
@@ -20,6 +20,9 @@ const GalleryItem: React.FC<GalleryItemProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [photoIndex, setPhotoIndex] = useState(0)
+
+  // نحول الصور إلى الصيغة المطلوبة للمكتبة
+  const slides = thumbs.map((thumb) => ({ src: thumb }))
 
   return (
     <div className='bg-white rounded-lg shadow-md p-4'>
@@ -52,16 +55,13 @@ const GalleryItem: React.FC<GalleryItemProps> = ({
 
       {isOpen && (
         <Lightbox
-          mainSrc={thumbs[photoIndex]}
-          nextSrc={thumbs[(photoIndex + 1) % thumbs.length]}
-          prevSrc={thumbs[(photoIndex + thumbs.length - 1) % thumbs.length]}
-          onCloseRequest={() => setIsOpen(false)}
-          onMovePrevRequest={() =>
-            setPhotoIndex((photoIndex + thumbs.length - 1) % thumbs.length)
-          }
-          onMoveNextRequest={() =>
-            setPhotoIndex((photoIndex + 1) % thumbs.length)
-          }
+          open={isOpen}
+          close={() => setIsOpen(false)}
+          slides={slides}
+          index={photoIndex}
+          on={{
+            view: ({ index }: { index: number }) => setPhotoIndex(index),
+          }}
         />
       )}
 
